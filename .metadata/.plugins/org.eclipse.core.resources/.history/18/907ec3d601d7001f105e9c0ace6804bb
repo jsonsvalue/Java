@@ -1,0 +1,12 @@
+
+public class Java02_Variables {
+	public static void main(String[] args) {
+		
+		int age;
+		
+		int $age;
+		
+		
+	}
+
+}

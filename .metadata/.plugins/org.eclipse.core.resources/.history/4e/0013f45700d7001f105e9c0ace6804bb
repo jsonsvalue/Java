@@ -1,0 +1,19 @@
+
+public class Java01_Hithere {
+	public static void main(String[] args) {
+		System.out.println("Hi there Java");
+		
+		
+		//
+		
+		/*
+		 */
+		
+		/**
+		 * 
+		 **/
+		
+		
+		
+	}
+}
