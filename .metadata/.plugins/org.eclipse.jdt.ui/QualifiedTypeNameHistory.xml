@@ -2,4 +2,7 @@
 <qualifiedTypeNameHistroy>
     <fullyQualifiedTypeName name="java.util.Arrays"/>
     <fullyQualifiedTypeName name="com.ssafy.ws.step2.Movie"/>
+    <fullyQualifiedTypeName name="Non_Inheritant01.Person"/>
+    <fullyQualifiedTypeName name="Non_Inheritant01.Student"/>
+    <fullyQualifiedTypeName name="java.util.Scanner"/>
 </qualifiedTypeNameHistroy>
