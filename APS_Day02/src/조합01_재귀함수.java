@@ -7,7 +7,7 @@ public class 조합01_재귀함수 {
 	
 	public static void main(String[] args) {
 		N = 4;
-		R = 2;
+		R = 3;
 		
 		ingrd = new String[]{"상추", "패티", "토마토", "치즈"};
 		sel = new String[R];
