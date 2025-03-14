@@ -19,7 +19,7 @@ public class 순열02_반복문 {
 		}
 		
 		// 재귀 부분
-		for(int i = idx; i<N; i++) {
+		for(int i = idx; i < N; i++) {
 			swap(i, idx);
 			perm(idx+1);
 			swap(i, idx);
@@ -32,6 +32,4 @@ public class 순열02_반복문 {
 		nums[a] = nums[b];
 		nums[b] = tmp;
 	}
-		
-		
 }
