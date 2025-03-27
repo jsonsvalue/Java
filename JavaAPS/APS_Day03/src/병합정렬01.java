@@ -39,7 +39,7 @@ public class 병합정렬01 {
 		// 한쪽 구간에 대한 정렬을 끝낸다.
 		while(L<=mid && R<=end) {
 			// 안정적인 정렬을 위해서 등호를 넣는다.
-			// 왼쪽에 있는 숫자와 오른쪽에 있는 숫자를 각각 분류해서 temp 배열에 넣는다. 
+			// mid를 기준으로 왼쪽에 있는 숫자와 오른쪽에 있는 숫자를 각각 분류해서 temp 배열에 넣는다.
 			if(arr[L] <= arr[R])
 				tmp[idx++] = arr[L++];
 			else {
@@ -49,7 +49,7 @@ public class 병합정렬01 {
 		}
 		
 		// 남은 구간에 대한 처리
-		if(L<=mid) {
+		if(L <= mid) {
 			for(int i=L; i<=mid; i++) {
 				tmp[idx++] = arr[i];
 			}
