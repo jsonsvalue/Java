@@ -2,7 +2,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Scanner;
 
-public class 그래프최소비용01_크루스칼 {
+public class 그래프최소비용02_크루스칼_배열 {
 	// 크루스칼 알고리즘에서 Minimum Spanning Tree의 최소 거리를 구하는 데 있어서 가장 핵심적인 개념은, 
 	// findSet에서 서로 다른 부모를 가진 경우 Spanning Tree에 노드를 Union을 이용해서 추가한다는 논리이다.
 	
@@ -14,6 +14,7 @@ public class 그래프최소비용01_크루스칼 {
 	
 	static int[] p; 	// 각 노드의 대표를 저장하는 배열이다.
 	static int[] rank;  // 균형 있는 트리를 만들기 위한 배열이다.
+	final static int COST = 2;
 	
 	// 간선을 저장하는 방식
 	// 1. Edge 클래스를 생성한다.
@@ -42,6 +43,8 @@ public class 그래프최소비용01_크루스칼 {
 		
 		Edge[] edges = new Edge[E];
 		
+		int[][] edges2 = new int[E][3]; //배열에 s, e, cost를 저장한다. 
+		
 		// 간선의 값을 입력 받는다.
 		for(int i=0; i<E; i++) {
 			int s = sc.nextInt();
@@ -49,16 +52,16 @@ public class 그래프최소비용01_크루스칼 {
 			int cost = sc.nextInt();
 			
 			edges[i] = new Edge(s, e, cost);
+			edges2[i] = new int[] {s, e, cost};
 			
 		}
 		
 		//1. 비용 기준으로 오름차순으로 정렬을 한다.
-		Arrays.sort(edges, (o1,o2) -> o1.cost- o2.cost);
+		Arrays.sort(edges2, (o1,o2) -> o1[COST]- o2[COST]);
+		
 		// Arrays.sort(edges, Comparator.comparing(o -> o.cost));
 		
-		for(Edge e: edges) {
-			System.out.println(e);
-		}
+		System.out.println(Arrays.deepToString(edges2));
 		
 		// 2. V-1개의 간선을 뽑아서, findSet을 통해서 서로 다른 트리인지를 확인하고 서로 다른 트리라면 union을 통해서 합친다.
 		p = new int[V];
@@ -69,8 +72,8 @@ public class 그래프최소비용01_크루스칼 {
 		int acc = 0;  // 누적 비용을 관리하기 위한 변수이다. 
 		int pick = 0; // 몇개의 정점을 뽑았는지 확인하기 위한 변수이다.
 		for(int i=0; i<E; i++) {
-			int s = edges[i].s;
-			int e = edges[i].e;
+			int s = edges2[i][0];
+			int e = edges2[i][1];
 
 			// 같은 트리인지 확인한다.
 			if(findSet(s) != findSet(e)) {
@@ -78,7 +81,7 @@ public class 그래프최소비용01_크루스칼 {
 				// 합쳤다는 것은 최소 거리를 계산하는 데 정점을 뽑았다는 말이기 때문에, 뽑은 정점의 개수를 늘리고 acc에 비용을 더한다.
 				union(s,e);
 				pick++;
-				acc += edges[i].cost;
+				acc += edges2[i][2];
 			}
 			
 			if(pick == V-1)
