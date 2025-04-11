@@ -1,0 +1,26 @@
+package DI_02_의존성제거;
+
+public class Programmer {
+	private String name;
+	private int age;
+	
+	// Desktop 클래스를 가져와서 쓴다.
+	private Desktop desktop;
+	
+	
+	/* 기존에 있던 Desktop 클래스를 가져와서 의존적으로 쓰는 것이 아니라,
+	 * public Programmer() { this.desktop = new Desktop();
+	 * 
+	 * }
+	 */
+	
+	// Desktop 객체를 가져와서 매개변수로 넣음으로써 객체 생성 의존성을 제거한다.
+	public Programmer(Desktop desktop) {
+		this.desktop = desktop;
+		
+	}
+	
+	public void coding() {
+		System.out.println(desktop.getInfo()+"으로 개발할게");
+	}
+}

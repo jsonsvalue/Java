@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd">
+	
+	<bean class = "com.ssafy.di.Desktop" id = "desktop"></bean>
+	
+	<!-- Bean내에서 직접 desktop을 생성한다. -->
+<!-- 	<bean class = "com.ssafy.di.Programmer" id = "programmer">
+		생성자를 주입한다.
+		<constructor-arg ref="desktop"></constructor-arg>
+	</bean> -->
+	
+	<!-- 설정자 주입 -->
+	<bean class = "com.ssafy.di.Programmer" id = "programmer">
+		<!-- 생성자를 주입한다. -->
+		<constructor-arg name="computer" ref="desktop"></constructor-arg>
+	</bean>
+	
+		
+
+</beans>
+
