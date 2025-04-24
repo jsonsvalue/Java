@@ -1,0 +1,87 @@
+package com.ssafy.debug.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.ssafy.debug.model.dto.FruitDto;
+import com.ssafy.debug.model.service.FruitService;
+//Fruit을 Base 주소로 가져간다.
+@Component
+@RequestMapping("/fruit")
+@Controller
+public class FruitController {
+	
+	//의존성을 주입 받아야, fruitService의 메서드를 쓸 수 있다.
+	@Autowired
+	private FruitService fruitService;
+	
+	//등록 페이지로 이동한다.
+	@GetMapping("/regist")
+	public String registForm() {
+		return "registform";
+	}
+	
+	// 등록 페이지에서 과일을 등록한다.
+	@PostMapping("/regist")
+	public String regist(FruitDto fruitDto) {
+		
+		System.out.printf("%d %s",fruitDto.getFruitId(), fruitDto.getFruitName());
+		fruitService.registFruit(fruitDto);
+		return "redirect:/fruit/list";
+	}
+	
+	// 전체 목록을 반환한다.
+	@GetMapping("/list")
+	public String list(Model model) {
+		
+		List<FruitDto> list = fruitService.getFruitList();
+		System.out.println(list);
+		
+		model.addAttribute("fruitList", fruitService.getFruitList());
+		return "list";
+	}
+	
+	// 과일에 대한 상세 정보를 가져온다.
+	// fruitId 정보를 key로 넘겨서 해당 fruitId를 받고, 해당 과일의 정보를 받아온다.
+	@GetMapping("/detail")
+	public String detail(@RequestParam("fruitId") int fruitId, Model model) {
+		
+		model.addAttribute("fruit", fruitService.getFruitDetail(fruitId));
+		return "detail";
+	}
+	
+	// 주어진 과일을 삭제한다.
+	// 삭제하고 전체 과일 목록으로 넘어간다.
+	@PostMapping("/delete")
+	public String delete(int fruitId) {
+		fruitService.deleteFruit(fruitId);
+		return "redirect:/fruit/list";
+	}
+	
+	// 해당 과일에 대한 정보를 수정하는 페이지로 넘어간다.
+	// 해당되는 과일 정보 fruitId를 갖고, updateForm으로 넘어간다.
+	@PostMapping("/updateform")
+	public String updateForm(@RequestParam("fruitId") int fruitId, Model model) {
+		FruitDto fruit = fruitService.getFruitDetail(fruitId);
+		// System.out.println(fruit.getTaste());
+		
+		model.addAttribute("fruit", fruitService.getFruitDetail(fruitId));
+		return "updateform";
+	}
+	
+	// 해당 과일에 대한 정보를 수정한다.
+	@PostMapping("/update")
+    public String update(Model model, FruitDto fruitDto) {
+        fruitService.updateFruit(fruitDto);
+        
+        return "redirect:/fruit/detail?fruitId="+fruitDto.getFruitId();
+    }
+}

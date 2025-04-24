@@ -1,0 +1,16 @@
+
+public class Caesar {
+	public static void main(String[] args) {
+		String giv = "SRKKCVJJRWP";
+		
+		char ch = giv.charAt(0);
+		int ascii = (int) ch - 65;
+		System.out.println(ascii);
+		
+		int charInt = (ascii + 9 ) % 26;
+		char newChar = (char)charInt;
+		System.out.println(newChar);
+		
+	}
+	
+}

@@ -1,0 +1,380 @@
+import java.net.*;
+import java.io.*;
+import java.util.*;
+
+public class TankVer2 {
+    private static final String NICKNAME = "서울9반_이재석";
+    private static final String HOST = "127.0.0.1";
+    private static final int PORT = 8747;
+
+    private static Socket socket = null;
+
+    private static String[][] mapData; // 맵 정보
+    private static Map<String, String[]> allies = new HashMap<>(); // 아군 정보
+    private static Map<String, String[]> enemies = new HashMap<>(); // 적군 정보
+    private static String[] codes; // 암호문 정보
+
+    public static void main(String[] args) {
+        String gameData = init(NICKNAME);
+
+        // while 반복문: 배틀싸피 메인 프로그램과 클라이언트(이 코드)가 데이터를 계속해서 주고받는 부분
+        while (gameData.length() > 0) {
+            // 자기 차례가 되어 받은 게임정보를 파싱
+            System.out.printf("----입력데이터----\n%s\n----------------\n", gameData);
+            parseData(gameData);
+
+            // 파싱한 데이터를 화면에 출력하여 확인
+            System.out.printf("\n[맵 정보] (%d x %d)\n", mapData.length, mapData[0].length);
+            for (String[] row : mapData) {
+                for (String cell : row) {
+                    System.out.printf("%s ", cell);
+                }
+                System.out.println();
+            }
+
+            System.out.printf("\n[아군 정보] (아군 수: %d)\n", allies.size());
+            for (String key : allies.keySet()) {
+                String[] value = allies.get(key);
+                if (key.equals("A")) {
+                    System.out.printf("A (내 탱크) - 체력: %s, 방향: %s, 일반포탄: %s, 메가포탄: %s\n",
+                            value[0], value[1], value[2], value[3]);
+                } else if (key.equals("H")) {
+                    System.out.printf("H (아군 포탑) - 체력: %s\n", value[0]);
+                } else {
+                    System.out.printf("%s (아군 탱크) - 체력: %s\n", key, value[0]);
+                }
+            }
+
+            System.out.printf("\n[적군 정보] (적군 수: %d)\n", enemies.size());
+            for (String key : enemies.keySet()) {
+                String[] value = enemies.get(key);
+                if (key.equals("X")) {
+                    System.out.printf("X (적 포탑) - 체력: %s\n", value[0]);
+                } else {
+                    System.out.printf("%s (적 탱크) - 체력: %s\n", key, value[0]);
+                }
+            }
+
+            System.out.printf("\n[암호문 정보] (%d)\n", codes.length);
+            for (String code : codes) {
+                System.out.println(code);
+            }
+
+            // 탱크의 동작을 결정하기 위한 알고리즘을 구현하고 원하는 커맨드를 output 변수에 담기
+            // 코드 구현 예시: '아래쪽으로 전진'하되, 아래쪽이 지나갈 수 있는 길이 아니라면 '오른쪽로 전진'하라
+            
+            //mapData에 따라 행동을 결정한다.
+            String output = decideAction(mapData);
+            System.out.println(output);
+            
+            //String output = "R A";
+            
+            
+			/*
+			 * String output = "A"; // 알고리즘에 의해 커맨드를 결정하기 전 임시로 A 지정
+			 * 
+			 * 
+			 * int[] myPosition = {-1, -1}; for (int i = 0; i < mapData.length; i++) { for
+			 * (int j = 0; j < mapData[i].length; j++) { if (mapData[i][j].equals("A")) {
+			 * myPosition[0] = i; myPosition[1] = j; break; } } if (myPosition[0] >= 0)
+			 * break; }
+			 * 
+			 * if (myPosition[0] < mapData.length - 1 && mapData[myPosition[0] +
+			 * 1][myPosition[1]].equals("G")) { output = "D A"; } else { output = "R A"; }
+			 */
+            	
+            
+            
+            // while 문의 끝에는 다음 코드가 필수로 존재하여야 함
+            // output에 담긴 값은 submit 함수를 통해 배틀싸피 메인 프로그램에 전달
+            gameData = submit(output);
+        }
+
+        close();
+    }
+
+    private static String decideAction(String[][] mapData) {
+		// 맵을 bfs로 순회하면서, 적 포탑으로 가는 최단 경로를 구한다.
+    	int row = mapData.length;
+    	int col = mapData[0].length;
+    	
+    	boolean[][] visited = new boolean[row][col];
+    	List<int[]> path = new ArrayList<>();
+    	int[] enemy = new int[2];
+    	int[] tank = new int[2];
+    	String tankString = "";
+    	
+    	for (String key : enemies.keySet()) {
+            String[] value = enemies.get(key);
+            if (!key.equals("X")) {
+            	tankString = value[0];
+            } 
+        }
+    	
+    	for(int i=0; i < row; i++) {
+    		for(int j=0; j < col; j++) {
+    			if(mapData[i][j].equals("A")) {
+    				path = bfs(visited, i, j);
+    			}
+    			
+    			if(mapData[i][j].equals("X")) {
+    				enemy[0] = i;
+    				enemy[1] = j;
+    			}
+    			
+    			if(mapData[i][j].equals("tankString")) {
+    				enemy[0] = i;
+    				enemy[1] = j;
+    			}
+    			
+    		}
+    	}
+    	
+    	
+    	for(int[] xy: path) {
+    		System.out.println(Arrays.toString(xy));
+    	}
+    	
+    	// 적에게 가는 최단 경로를 구했으면, 그 최단 경로에 맞는 명령을 String으로 받는다.
+    	String command = giveAction(path, enemy);
+    	
+    	return command;
+	}
+    
+    // bfs를 통해서 포탑으로 가는 최단 거리를 찾는다.
+    private static List<int[]> bfs(boolean[][] visited, int x, int y){
+    	int row = mapData.length;
+    	int col = mapData[0].length;
+    	
+    	Queue<int[]> q = new LinkedList<>();
+    	q.add(new int[] {x,y});
+    	visited[x][y] = true;
+    	
+    	// 각 좌표별로 내가 거쳐갔던 경로를 기록하기 위한 배열을 만든다.
+    	int[][][] prev = new int[row][col][2];
+    	
+    	int[] dx = {-1, 1, 0, 0};
+    	int[] dy = {0, 0, -1, 1};
+    	
+    	while(!q.isEmpty()) {
+    		int[] curr = q.poll();
+    		int currX = curr[0];
+    		int currY = curr[1];
+    		
+    		// System.out.println("BFS");
+    		// System.out.printf("%d %d",currX, currY);
+    		
+    		for(int k = 0; k < 4; k++) {
+    			int nx = currX + dx[k];
+    			int ny = currY + dy[k];
+    			
+    			// 판을 벗어나면 제외한다.
+    			if(nx < 0 || nx >=row || ny < 0 || ny >= col)
+    				continue;
+    			
+    			// 최단 거리를 포기하고 일단 풀을 만나면, 무시한다.
+    			// 물이나 돌을 만나면 제외한다.
+    			if(mapData[nx][ny].equals("W") || mapData[nx][ny].equals("R") || mapData[nx][ny].equals("G"))
+    				continue;
+    			
+    			// 배열을 벗어나지 않으면서, 
+    			// 물이 아니거나 돌이 아니면 Queue에 집어넣는다.
+    			if(!visited[nx][ny]) {
+    				q.add(new int[] {nx, ny});
+    				visited[nx][ny] = true;
+    				
+    				// 현재 좌표가 거쳐간 경로를 저장하기 위해, 현재 좌표가 거쳐간 X,Y 좌표를 prev 배열에 넣는다.
+    				prev[nx][ny][0] = currX;
+    				prev[nx][ny][1] = currY;
+    				    				
+    				// 최종 목적지에 도착할 때, 이전에 거쳐갔던 배열을 추출한다.
+    				if(mapData[nx][ny].equals("X")) {
+    					List<int[]> path = new ArrayList<>();
+    					int pathX = nx;
+    					int pathY = ny;
+
+    					// 처음 배열로 돌아갈 때까지, 목적지에서부터 이전 배열을 모두 path에 넣는다. 
+    					while(!(pathX ==x && pathY ==y)) {
+    						path.add(new int[] {pathX, pathY});
+    						
+    						int prevX = prev[pathX][pathY][0];
+    						int prevY = prev[pathX][pathY][1];
+    						
+    						pathX = prevX;
+    						pathY = prevY;
+    					}
+    					
+    					path.add(new int[] {x, y});
+    					Collections.reverse(path);
+    					
+    					return path;
+    				}
+    				
+    			}
+    			
+    		}
+    		
+    	}
+    			
+    	return new ArrayList<>();
+    }
+    
+    // 포탑으로 가는 최단 경로를 찾았다면, 최단 경로에 맞는 명령어를 찾는다.
+    private static String giveAction(List<int[]> path, int[] enemy) {
+    	int currX = path.get(0)[0];
+    	int currY = path.get(0)[1];
+    	
+    	int nextX = path.get(1)[0];
+    	int nextY = path.get(1)[1];
+    	
+    	int eneX = enemy[0];
+    	int eneY = enemy[1];
+    	
+    	String command = "";
+    	// 어차피 대각선을 갈 수 없으니, x, y 값만 비교하면 된다.
+    	if(currX > nextX) {
+    		command = "U A";
+    	}else if (currX < nextX) {
+    		command = "D A";
+    	}else if (currY < nextY) {
+    		command = "R A";
+    	}else if (currY > nextY) {
+    		command = "L A";
+    	}
+    	
+    	// 마지막 칸에 도달해서 현재 좌표랑 적의 좌표가 1칸 밖에 차이가 안난다면, 포탄을 발사한다.
+    	if(Math.abs(currX - eneX) + Math.abs(currY - eneY) == 1) {
+    		if(currX > nextX) {
+        		command = "U F";
+        	}else if (currX < nextX) {
+        		command = "D F";
+        	}else if (currY < nextY) {
+        		command = "R F";
+        	}else if (currY > nextY) {
+        		command = "L F";
+        	}
+    	}
+    	
+    	if(Math.abs(currX - eneX) + Math.abs(currY - eneY) == 1) {
+    		if(currX > nextX) {
+        		command = "U F";
+        	}else if (currX < nextX) {
+        		command = "D F";
+        	}else if (currY < nextY) {
+        		command = "R F";
+        	}else if (currY > nextY) {
+        		command = "L F";
+        	}
+    	}
+    	
+    	
+    	
+    	return command;
+    	
+    }
+    
+	// 초기 연결
+    private static String init(String nickname) {
+        try {
+            socket = new Socket();
+            System.out.println("[STATUS] Connecting to " + HOST + ":" + PORT);
+            socket.connect(new InetSocketAddress(HOST, PORT));
+            System.out.println("[STATUS] Connected");
+
+            return submit("INIT " + nickname);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "";
+        }
+    }
+
+    // 명령 전송
+    private static String submit(String command) {
+        try {
+            OutputStream os = socket.getOutputStream();
+            os.write((command + " ").getBytes("UTF-8"));
+            os.flush();
+
+            return receive();
+        } catch (Exception e) {
+            close();
+            return "";
+        }
+    }
+
+    // 응답 수신
+    private static String receive() {
+        try {
+            InputStream is = socket.getInputStream();
+            byte[] bytes = new byte[1024];
+            int length = is.read(bytes);
+            if (length <= 0) {
+                close();
+                return "";
+            }
+
+            String gameData = new String(bytes, 0, length, "UTF-8");
+            if (gameData.length() == 0 || gameData.startsWith("0")) {
+                close();
+                return "";
+            }
+
+            return gameData;
+        } catch (Exception e) {
+            close();
+            return "";
+        }
+    }
+
+    // 소켓 종료
+    private static void close() {
+        try {
+            if (socket != null && !socket.isClosed()) {
+                socket.close();
+                System.out.println("[STATUS] Connection Closed.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    // 입력 데이터를 파싱하여 변수에 저장
+    private static void parseData(String gameData) {
+        // 입력 데이터를 행으로 나누기
+        String[] rows = gameData.split("\n");
+        int index = 0;
+
+        String[] header = rows[index++].split(" ");
+        int h = Integer.parseInt(header[0]); // 맵의 세로 크기
+        int w = Integer.parseInt(header[1]); // 맵의 가로 크기
+        int a = Integer.parseInt(header[2]); // 아군의 수
+        int e = Integer.parseInt(header[3]); // 적군의 수
+        int c = Integer.parseInt(header[4]); // 암호문의 수
+
+        // 기존의 맵 정보를 초기화하고 다시 읽어오기
+        mapData = new String[h][w];
+        for (int i = 0; i < h; i++) {
+            mapData[i] = rows[index++].split(" ");
+        }
+
+        // 기존의 아군 정보를 초기화하고 다시 읽어오기
+        allies.clear();
+        for (int i = 0; i < a; i++) {
+            String[] parts = rows[index++].split(" ");
+            allies.put(parts[0], Arrays.copyOfRange(parts, 1, parts.length));
+        }
+
+        // 기존의 적군 정보를 초기화하고 다시 읽어오기
+        enemies.clear();
+        for (int i = 0; i < e; i++) {
+            String[] parts = rows[index++].split(" ");
+            enemies.put(parts[0], Arrays.copyOfRange(parts, 1, parts.length));
+        }
+
+        // 기존의 암호문 정보를 초기화하고 다시 읽어오기
+        codes = new String[c];
+        for (int i = 0; i < c; i++) {
+            codes[i] = rows[index++];
+        }
+    }
+}

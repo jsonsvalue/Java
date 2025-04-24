@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssafy.mvc.model.dao.UserDao">
+	
+	<!-- 회원 가입 정보를 DB에 넣는다. -->
+	<!-- Column명, DTO명에 맞게 데이터를 넣는다. -->
+	<insert id ="insertUser" parameterType="User">
+		INSERT INTO users (id, password, name, curriculum_code)
+		VALUES (#{id},#{password},#{name},#{curriculumCode})
+	</insert>
+	 
+	 <!-- 특정 User를 고른다. -->
+	 <select id = "selectOne" parameterType="Map">
+	 	SELECT id, name
+	 	FROM users
+	 	WHERE id = #{id} AND password = #{password}	
+	 </select>
+	 
+	 <!-- 전체 user를 가져온다. -->
+	 <!-- user와 curriculum을 INNER JOIN을 통해서, 필요한 데이터를 가져온다. -->
+	 <select id="selectAll">
+	 	SELECT u.id id, u.password password, u.name name, c.name curriculumName
+	 	FROM users u, curriculum c
+	 	WHERE u.curriculum_code = c.code
+	 	;
+	 </select>
+	 
+</mapper>

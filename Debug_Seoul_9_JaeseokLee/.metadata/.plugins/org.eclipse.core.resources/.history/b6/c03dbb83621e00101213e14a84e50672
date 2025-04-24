@@ -1,0 +1,22 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<title>과일 정보 수정</title>
+</head>
+<body>
+	<h2>과일 정보 수정</h2>
+	<form action="${pageContext.request.contextPath}/fruit/update"
+		method="POST">
+		
+		이름: <input type="text" name="fruitName" placeholder ="${fruit.fruitName}"><br>
+		맛: <input type="text" name="taste" placeholder = "${fruit.taste}"><br>
+		가격: <input type="number" name="price" placeholder = "${fruit.price}"><br>
+		수량: <input type="number" name="quantity" placeholder = "${fruit.taste}"><br>
+		
+		<input type="submit" value="수정 완료">
+		
+	</form>
+</body>
+</html>

@@ -1,0 +1,11 @@
+
+public class Caesar {
+	public static void main(String[] args) {
+		String giv = "SRKKCVJJRWP";
+		
+		char c= giv.charAt(0);
+		int ascii = (int) c;
+		System.out.println(ascii);
+	}
+	
+}
