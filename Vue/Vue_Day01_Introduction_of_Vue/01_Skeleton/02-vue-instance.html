@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div id="app">
+    <h2>{{message}}</h2>
+    <!-- 중괄호 2개 쓰인 구문에서는 javascript 표현식을 쓸 수 있다. -->
+    <h2>{{message.split('').reverse().join('')}}</h2>
+  </div>
+
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <script>
+    const {createApp, ref} = Vue
+
+    // 2. Vue 객체를 만든다.
+    const app = createApp({
+      setup(){
+        // 3. ref를 이용해서 변수를 선언한다.
+        const message = ref("Hello World")
+        
+        console.log(message)
+        console.log(message.value)
+        // 4. 템플릿에서 활용하려면 객체 형태로 반환해야 한다.
+        return{
+          message
+        }
+      }
+    })
+
+    // 5. 컨테이너 요소와 Vue 객체를 연결한다.
+    app.mount("#app")
+
+  </script>
+
+
+  
+</body>
+</html>

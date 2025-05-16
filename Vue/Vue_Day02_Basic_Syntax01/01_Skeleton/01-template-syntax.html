@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Vue</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  </head>
+
+  <body>
+    <div id="app">
+      <h2>{{msg}}</h2>
+      
+      <!--중괄호 2개가 아니라, v-html로 지정을 해서 텍스트로 인식하도록 해야 한다.-->
+      <p>{{rawHTML}}</p>
+      <div v-html="rawHTML"></div>
+      <!--Attribute Binding-->
+      <div v-bind:id="dynamicId">안녕</div>
+      <div>{{number + 1}}</div>
+      <div>{{flag ? 'Yes': 'No'}}</div>
+
+      <div v-bind:id="`list-${number}`">동적 ID</div>
+      <div v-if="flag">이거 보이냐</div>
+      <div v-show="flag">이거 보이냐 222</div>
+      
+      
+    </div>
+    
+    <script>
+      const { createApp, ref } = Vue;
+
+      const app = createApp({
+        setup() {
+          const msg = ref("Hi there")
+          const rawHTML = ref(`<span style = "color:red">해당 글씨는 붉은색입니다.</span>`)
+          const dynamicId = ref('my-id')
+          const number = ref(1)
+          const flag = ref(true)
+
+          return {
+            msg,
+            rawHTML,
+            dynamicId,
+            number, 
+            flag
+          };
+        },
+        
+
+      
+      });
+      app.mount("#app");
+    </script>
+  </body>
+</html>

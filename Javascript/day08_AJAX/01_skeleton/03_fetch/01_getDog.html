@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Dog API</title>
+  </head>
+  <body>
+    <div>
+      <h1>Dog API</h1>
+      <div>
+        <button id="btn1">XMLHttpRequest</button>
+        <button id="btn2">Fetch</button>
+      </div>
+      <div>
+        <img src="" alt="" id="dog-img" />
+      </div>
+    </div>
+    <script>
+      const URL = 'https://dog.ceo/api/breeds/image/random';
+
+      document.querySelector("#btn1").addEventListener('click',()=>{
+        
+
+      })
+
+      document.querySelector("#btn2").addEventListener('click', ()=>{
+        fetch(URL)
+        .then((response)=>{
+          // console.log(response.text())
+          // console.log(response.json())
+          
+          // imgData를 반환하도록 한다.
+          // 클릭할 때마다 imgData를 img에 넣도록 한다.
+          return response.json()
+          .then((imgData)=>{
+            console.log(imgData)
+            document.querySelector('#dog-img').setAttribute('src', imgData.message)
+
+          })
+          .catch((err)=>{
+            console.log(err)
+          })
+
+        })
+        
+
+      })
+
+    </script>
+  </body>
+</html>

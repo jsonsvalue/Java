@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Vue</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  </head>
+
+  <body>
+    <div id="app">
+      <p>{{count}}</p>
+      <button @click = "count++">+</button>
+
+    </div>
+
+    <script>
+      // Vue에서 정의된 onMounted, onUpdate를 통해
+      // 인스턴스의 생애 주기 상 이벤트에 따라 실행되는 함수가 다르다.
+      const { createApp, ref, onMounted, onUpdated } = Vue;
+
+      const app = createApp({
+        setup() {
+          const count = ref(0);
+
+          onMounted(()=>{
+            console.log("연결 완료!")
+          }) 
+
+          onUpdated(()=>{
+            console.log("데이터 업데이트 됨!")
+          })
+
+          return {
+            count,
+          };
+        },
+      });
+      app.mount("#app");
+    </script>
+  </body>
+</html>

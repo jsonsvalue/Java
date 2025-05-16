@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Vue</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  </head>
+
+  <body>
+    <div id="app">
+      <!-- v-for-->
+      <div v-for = "person in myArr">
+        {{person.name}} / {{person.age}}
+      </div>
+
+      <hr>
+      <!--매개변수 작성 순서가 중요하다.-->
+      <div v-for = "(person, index) in myArr">
+        {{index +1}} : {{person.name}} / {{person.age}}
+      </div>
+
+      <hr>
+      <div v-for = "(value, key, index) in myObj">
+        {{index+1}} = {{key}}: {{value}}
+      </div>
+
+      <hr>
+      <ul>
+        <template v-for = "item in myArr">
+          <li>{{item.name}}</li>
+          <li>{{item.age}}</li>
+        </template>
+      </ul>
+
+      <!--중첩된 for문-->
+      <hr>
+      <ul v-for = "person in myInfo">
+        <li v-for="friend in person.friends">
+          {{person.name}} 과 {{friend}} 는 친구이다.
+        </li>
+      </ul>
+
+            
+
+    </div>
+    <script>
+      const { createApp, ref } = Vue;
+
+      const app = createApp({
+        setup() {
+          const myArr = ref([
+            { name: "Alice", age: 20 },
+            { name: "Bella", age: 21 },
+          ]);
+          const myObj = ref({
+            name: "Cathy",
+            age: 30,
+          });
+
+          const myInfo = ref([
+            { name: "Alice", age: 20, friends: ["Bella", "Cathy", "Dan"] },
+            { name: "Bella", age: 21, friends: ["Alice", "Cathy"] },
+          ]);
+
+          return {
+            myArr,
+            myObj,
+            myInfo,
+          };
+        },
+      });
+      app.mount("#app");
+    </script>
+  </body>
+</html>

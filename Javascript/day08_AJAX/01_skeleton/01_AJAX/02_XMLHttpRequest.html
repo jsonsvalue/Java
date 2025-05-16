@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    const URL = 'https://jsonplaceholder.typicode.com/todos/1'
+
+    // XML Http Request라는 객체를 생성한다.
+    const xhr = new XMLHttpRequest()
+
+    // 특정 작업을 처리할 url을 지정한다.
+    xhr.open('GET', URL)
+
+    // 지정한 사이트에 GET 요청을 보낸다.
+    xhr.send()
+
+    // console.log(xhr)
+    // const todo = xhr.response
+    // console.log(todo)
+
+    // 함수를 직접 만든다.
+    xhr.onreadystatechange = function(){
+      if(xhr.readyState === xhr.DONE){
+        if(xhr.status === 200){
+          const todo = xhr.response
+          console.log(todo)
+        }
+
+      }
+
+    }
+
+  </script>
+</body>
+
+</html>

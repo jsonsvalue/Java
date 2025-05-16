@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Vue</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  </head>
+
+  <body>
+    <div id="app">
+      <h2>남은 할 일</h2>
+      <p>남은 일 개수: {{todos.length}}</p>
+      <p>{{todos.length > 0 ? "일해야지" :"퇴근하자"}}</p>
+
+      <hr>
+      <h2>Computed을 이용해보자</h2>
+      <p>{{restOfTodos}}</p>
+
+      <h2>함수로 해보자</h2>
+      <p>{{functionTodos()}}</p>
+    </div>
+
+    <script>
+      // 코드를 자유롭게 작성하세용
+      const { createApp, ref, computed } = Vue;
+
+      const app = createApp({
+        setup() {
+          const todos = ref([
+            { text: "Vue 공부하기" },
+            { text: "Vue 실습하기" },
+            { text: "밥먹기" },
+          ]);
+
+          // computed를 사용해서 표현해보기
+          const restOfTodos = computed(()=>{
+            return todos.value.length > 0 ? "계산해보니 퇴근 못하겠네": "이제 퇴근해" 
+          });
+
+          // 함수 생성해서 사용해보기
+          const functionTodos = function(){
+            return todos.value.length > 0 ? "머야 함수로도 가능하잖아":"이제 퇴근해봐"
+          }
+
+          return {
+            todos,
+            restOfTodos,
+            functionTodos
+          };
+        },
+      });
+
+      app.mount("#app");
+    </script>
+  </body>
+</html>
